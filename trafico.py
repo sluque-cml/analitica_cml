@@ -1,3 +1,74 @@
+"""
+PANDAS INTRODUCCION
+-SUPERA A EXCEL EN MUCHAS COSAS
+-EXCEL MANEJA 1m FILAS, MIENTRAS QUE PYTHON PUEDE MANEJAR MILLONES DE FILAS
+-TRASFORMACION DE DATA COMPLEJA ES MUCHO MAS FACIL. NO SE CUELGA UNA HOJA DE CALCULO
+-AUTOMATIZACION DE TAREAS MUCHO MAS FACIL. NO NECESITA MACROS. TIENE CIENTOS DE LIBRERIAS PARA AUTOMATIZAR
+-COMPATIBILIDAD EN DIFERENTES PLATAFORMAS. EN EXCEL ALGUNAS FORMULAS CREADAS EN WINDOWS NO FUNCIONAN EN MAC Y ASI
+"""
+
+"""
+ARRAYS
+    ES COMO UNA LISTA
+    PUEDEN SER DE 1 DIMENSION O DE 2 DIMENSIONES
+        SERIES: ARRYA DE 1Q DIMENSION
+        DATAFRAMES: ARRAY DE 2 DIMENSIONES
+
+EN PANDAS PRINCIPALMENTE SE TRABAJA CON DATAFRAMES
+DATAFRAME == HOJA DE CALCULO, FILAS Y COLUMNAS (SERIES)
+COLUMNAS = FEATURES
+VALORES DE LAS FILAS = OBSERVACIONES
+
+EN LA PARTE SUPERIOR SE VE EL NOMBRE DE LAS CCOLUMNAS Y EN LA IZQUIERDA LOS INDEX QUE EMPIEZAN EN CERO
+SE PUEDE ALMACENAR DIFERENTES TIPOS DE DATOS: INTEGER, STRING, BOOLEAN, ETC
+EN UNA SOLA COLUMNA SOLO DEBERIA HABER DATOS DEL MISMO TIPO
+
+TRADUCCION ENTRE EXCEL Y PANDAS
+HOJA DE CALCULO         -> DATAFRAME
+COLUMNAS                -> SERIES O COLUMNAS
+NUMEROS DE LA IZQUIRDA  -> INDEX
+FILAS                   -> ROW
+CELDA VACIA             -> NAN
+
+1. IMPORTAR LOS DATOS
+"""
+df_trx = pd.read_csv("Z:\\2023\\TRANSACCIONES12.txt", sep="|", encoding='ISO-8859-1', header=None, names=['codigo','talla','fecha','cod_tienda','ven_und','ven_val','inv','costo_ven','multrot','ticket','vende','desc_ven','cedula','nombres','iva','origen','suborigen','valor_iva','venta_sin_iva','nomvende','cargo','compania'] )
+
+"""
+2. LIMPIEZA DE DATOS
+"""
+#eliminar espacios en blanco
+df_trx['cod_tienda'] = df_trx['cod_tienda'].str.strip()
+#buscar valores nulos
+df_trx[df_trx['cod_tienda'].isnull()] #esto se hace para cada columna
+df_trx[df_trx['ticket'].isnull()] #se encontraron tickets en nulo
+#eliminar la data faltante
+df_trx.dropna(inplace = True)
+
+"""
+UNION ALL DE 2 DATAFRAMES
+"""
+df_trx1 = df_trx #250157 rows × 22 columns
+df_combi = pd.concat([df_trx, df_trx1], ignore_index=True) #500314 rows × 22 columns
+#eliminar los duplicados
+df_combi.drop_duplicates(inplace=True) #250157 rows × 22 columns
+#ordenar el dataframe
+df_combi.sort_values('cod_tienda', inplace=True) #ordena por cod_tienda
+
+"""
+TRABAJAR CON LOS DATOS
+"""
+#filtrar solo los registros que tengan la tienda 012
+df_012 = df_combi[df_combi['cod_tienda'].str.contains('12')] #pero saca tambien la 212
+#vamos a ver que mas trajo que no nos sirve
+df_012.groupby('cod_tienda').count() #trajo tambien la 121,127 y 212
+#entonces se hace el filtrado estricto
+df_012 = df_combi[df_combi['cod_tienda'] == '12'] #ahora si trajo solo la tienda 012
+#contar codigos
+df_012['codigo'].nunique() #1774 codigos diferentes
+"""
+---------------------------------------------------------------------------------------
+"""
 import pandas as pd
 import numpy as np
 import seaborn as sb
