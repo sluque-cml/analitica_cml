@@ -24,7 +24,7 @@ df_trafico['fecha'] = pd.to_datetime(df_trafico['fecha'])
 
 
 #leer archivo de transacciones (el archivo viene sin nombres de columnas)
-df_trx = pd.read_csv("Z:\\2023\\08 AGOSTO\\14 LUNES\\ANALISIS_TRAFICO\\TRANSACCIONES12.txt", sep="|", encoding='ISO-8859-1', header=None, names=['codigo','talla','fecha','cod_tienda','ven_und','ven_val','inv','costo_ven','multrot','ticket','vende','desc_ven','cedula','nombres','iva','origen','suborigen','valor_iva','venta_sin_iva','nomvende','cargo','compania'] )
+df_trx = pd.read_csv("Z:\\2023\\TRANSACCIONES12.txt", sep="|", encoding='ISO-8859-1', header=None, names=['codigo','talla','fecha','cod_tienda','ven_und','ven_val','inv','costo_ven','multrot','ticket','vende','desc_ven','cedula','nombres','iva','origen','suborigen','valor_iva','venta_sin_iva','nomvende','cargo','compania'] )
 
 #limpieza de datos
 df_trx_filter = df_trx.fillna(0) #colocar 0 en los campos NaN y no elimina las filas
@@ -44,11 +44,12 @@ df_trx['nombres'] = df_trx['nombres'].astype('string')
 df_trx['ticket'] = df_trx['ticket'].astype('string')
 df_trx['talla'] = df_trx['talla'].astype('string')
 
-#resumen de transacciones venta e inventario
+#agrupar
 df_trx_resumen = df_trx.groupby(['fecha']).sum()
+df_trx_filter.groupby(['codigo']).sum() #agrupar por una columna
+df_trx_filter.groupby(['codigo','cod_tienda']).sum() #agrupar por dos columnas
 
-
-#ajuste de tiops de datos del dataframe filtrado
+#ajuste de tipos de datos del dataframe filtrado
 df_trx_filter['fecha'] = pd.to_datetime(df_trx_filter['fecha'])
 df_trx_filter['codigo'] = df_trx_filter['codigo'].astype('string')
 df_trx_filter['cod_tienda'] = df_trx_filter['cod_tienda'].astype('string')
@@ -63,6 +64,10 @@ df_trx_filter['nombres'] = df_trx_filter['nombres'].astype('string')
 df_trx_filter['ticket'] = df_trx_filter['ticket'].astype('string')
 df_trx_filter['talla'] = df_trx_filter['talla'].astype('string')
 
+#suma de una columna
+df_trx_filter['ven_und'].sum()  #suma los datos de una columna
+df_trx_filter[['ven_und','venta_sin_iva']].sum() #suma varias columnas
+df_trx_filter.groupby(['cod_tienda','fecha']).sum().groupby(level=[0]).cumsum() #suma acumulativa por tienda y por fecha
 
 
 #filtrado de datos de una columna
