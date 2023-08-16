@@ -66,6 +66,28 @@ df_012.groupby('cod_tienda').count() #trajo tambien la 121,127 y 212
 df_012 = df_combi[df_combi['cod_tienda'] == '12'] #ahora si trajo solo la tienda 012
 #contar codigos
 df_012['codigo'].nunique() #1774 codigos diferentes
+#eliminar una fila: primero hay que identificar cual es el index de la fila que se va a quitar
+#quiero eliminar lo que tenga venta =0
+df_012[df_012['ven_und'] == 0] #primero se identifican los valores que se quieren quitar
+#luego se le pasan al metodo drop()
+df_012.drop(df_012[df_012['ven_und'] == 0].index, inplace=True) #6263 rows - 5144 = 1119
+#el inplace=true se coloca para que los resultados queden almacenados en el mismo lugar
+
+#ahora quiero buscar que cosas en venta no son un digito, se usan expresiones regulares
+df_012['codigo'].str.contains('[^\d-]') #busca lo que sea un digito
+~df_012['codigo'].str.contains('[^\d-]') #busca lo que NO sea un digito (utiliza la ~)
+#lo anterior solo saca el resultado true o false por cada index. lo aplicamos al dataframe
+df_012[~df_012['codigo'].str.contains('[^\d.0]') ]
+#vemos que hay muchos valores con ".0", entonces hay que reemplazarlos
+df_012['cedula'] = df_012['cedula'].str.replace('[^\d.0]','', regex=True)
+df_combi['cedula'] = df_combi['cedula'].str.replace('[^\d.0]','', regex=True)
+
+
+#hacer un split de una columna en varias de acuerdo con un caracter
+#voy a hacerlo con el numero de factutra para que cree dos columnas diferentes : las tienda y el numero de ticket
+#primero cargamos el datafframe con datos. Selecciono solo lo que tenga ventas 
+df_venta = df_combi[df_combi['ven_und'] > 0]
+df_venta[['tnd','nticket']] = df_venta['ticket'].str.split('/', expand=True)
 """
 ---------------------------------------------------------------------------------------
 """
