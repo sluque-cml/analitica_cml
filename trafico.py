@@ -47,6 +47,8 @@ df_trx.dropna(inplace = True)
 
 """
 UNION ALL DE 2 DATAFRAMES
+NOTA: AL SACAR UNA COPIA DEL DATAFRAME ES MEJOR INVOCAR EL METODO copy() PARA QUE SE ESTE TRABAJANDO SOBRE UN DF NUEVO Y NO SOBRE UNA VISTA DEL DF PRINCIPAL
+ESTO EVITA EL ERROR SettingWithCopyWarning QUE NO DEJA ALTERAR LOS DATOS ORIGINALES
 """
 df_trx1 = df_trx #250157 rows × 22 columns
 df_combi = pd.concat([df_trx, df_trx1], ignore_index=True) #500314 rows × 22 columns
