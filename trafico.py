@@ -48,7 +48,12 @@ df_trx['talla'] = df_trx['talla'].astype('string')
 df_trx_resumen = df_trx.groupby(['fecha']).sum()
 df_trx_filter.groupby(['codigo']).sum() #agrupar por una columna
 df_trx_filter.groupby(['codigo','cod_tienda']).sum() #agrupar por dos columnas
+#tomar solo una tienda del dataframe filtrado
+df_acum = df_trx_filter.groupby(['cod_tienda','fecha']).sum().groupby(level=[0]).cumsum() #bajar los datos agrupados a otro dataframe
 
+"""
+AJUSTE DE TIPOS DE DATOS
+"""
 #ajuste de tipos de datos del dataframe filtrado
 df_trx_filter['fecha'] = pd.to_datetime(df_trx_filter['fecha'])
 df_trx_filter['codigo'] = df_trx_filter['codigo'].astype('string')
@@ -64,12 +69,26 @@ df_trx_filter['nombres'] = df_trx_filter['nombres'].astype('string')
 df_trx_filter['ticket'] = df_trx_filter['ticket'].astype('string')
 df_trx_filter['talla'] = df_trx_filter['talla'].astype('string')
 
+"""
+SUMAS
+"""
 #suma de una columna
 df_trx_filter['ven_und'].sum()  #suma los datos de una columna
 df_trx_filter[['ven_und','venta_sin_iva']].sum() #suma varias columnas
 df_trx_filter.groupby(['cod_tienda','fecha']).sum().groupby(level=[0]).cumsum() #suma acumulativa por tienda y por fecha
+df_trx_filter[df_trx_filter.groupby(['cod_tienda','fecha']).sum().groupby(level=[0]).cumsum()]
+
+"""
+ORDENAMIENTOS
+"""
+#ordenar por un campo
+df_trx_filter.sort_values(by='ven_und') #por defecto ordena de menor a mayor por ven_und
+df_trx_filter.sort_values(by='ven_und', ascending=False) #ordenar de mayor a menor por ven_und
 
 
+"""
+FILTRADO DE REGISTROS POR FILA
+"""
 #filtrado de datos de una columna
 df_trx_filter[['codigo', 'ven_und']]
 #filtrado por filas
